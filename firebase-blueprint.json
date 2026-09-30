@@ -1,0 +1,109 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with contact information and platform status",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "firstName": { "type": "string", "maxLength": 100 },
+        "lastName": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "email": { "type": "string", "maxLength": 200 },
+        "role": { "type": "string", "enum": ["student", "admin"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "firstName", "lastName", "email"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "Diploma semester batch with curriculum, pricing, and subjects",
+      "type": "object",
+      "properties": {
+        "courseId": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "branch": { "type": "string", "enum": ["Electrical", "Mechanical", "Metallurgy", "Computer Science"] },
+        "semester": { "type": "string", "enum": ["1st Semester", "3rd Semester", "5th Semester"] },
+        "price": { "type": "number" },
+        "description": { "type": "string", "maxLength": 2000 },
+        "thumbnail": { "type": "string" },
+        "active": { "type": "boolean" },
+        "subjects": { "type": "array" },
+        "lessons": { "type": "array" }
+      },
+      "required": ["courseId", "title", "branch", "semester", "price"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Payment transactions for batch purchases",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string" },
+        "uid": { "type": "string" },
+        "courseId": { "type": "string" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "paymentProvider": { "type": "string" },
+        "paymentReference": { "type": "string" },
+        "paymentStatus": { "type": "string", "enum": ["Pending", "Paid", "Failed"] },
+        "createdAt": { "type": "string" },
+        "verifiedAt": { "type": "string" }
+      },
+      "required": ["orderId", "uid", "courseId", "amount", "paymentStatus"]
+    },
+    "Purchase": {
+      "title": "Purchase",
+      "description": "Verified student course subscription records",
+      "type": "object",
+      "properties": {
+        "purchaseId": { "type": "string" },
+        "uid": { "type": "string" },
+        "courseId": { "type": "string" },
+        "orderId": { "type": "string" },
+        "purchaseDate": { "type": "string" },
+        "accessStatus": { "type": "string", "enum": ["active", "revoked"] }
+      },
+      "required": ["purchaseId", "uid", "courseId", "orderId", "accessStatus"]
+    },
+    "Progress": {
+      "title": "Progress",
+      "description": "Student lesson completion and resume progress",
+      "type": "object",
+      "properties": {
+        "progressId": { "type": "string" },
+        "uid": { "type": "string" },
+        "courseId": { "type": "string" },
+        "completedLessons": { "type": "array" },
+        "lastLesson": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "courseId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Stores user profiles with contact details and role"
+    },
+    "/courses/{courseId}": {
+      "schema": "Course",
+      "description": "Stores all course batches and syllabi"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Stores checkout transactions and verification state"
+    },
+    "/purchases/{purchaseId}": {
+      "schema": "Purchase",
+      "description": "Stores granted course access rights for students"
+    },
+    "/progress/{progressId}": {
+      "schema": "Progress",
+      "description": "Stores student lesson completion records"
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "User" },
+      "description": "Tracks verified administrator users"
+    }
+  }
+}
